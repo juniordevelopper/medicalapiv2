@@ -1,0 +1,31 @@
+# Python kesh fayllari
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual muhit (Virtual Environment)
+venv/
+env/
+.venv/
+ENV/
+
+# Maxfiy ma'lumotlar (Secret key, DB parollari va h.k.)
+.env
+local_settings.py
+
+# Ma'lumotlar bazasi
+db.sqlite3
+*.db
+
+# Media va Static fayllar (Agar serverda yig'ilsa)
+media/
+staticfiles/
+
+# IDE va tahrirlovchi sozlamalari
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Log fayllar
+*.log
