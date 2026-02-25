@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from .models import Department, Hospital, HospitalImage
 from locations.serializers import LocationNameSerializer
-from accounts.models import Director, CustomUser
-from accounts.serializers import DirectorShortSerializer
+from accounts.serializers import DirectorSerializer
+from accounts.models import CustomUser
 
 # -------------------------------------------------------------------------
 # DepartmentSerializer
@@ -36,32 +36,52 @@ class HospitalSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True
     )
+    director_detail = DirectorSerializer(source='director', read_only=True)
     location_detail = LocationNameSerializer(source='location', read_only=True)
     departments_detail = DepartmentNameSerializer(source='departments', many=True, read_only=True)
-    director_detail = DirectorShortSerializer(source='director', read_only=True)
     images_detail = HospitalImageSerializer(source='images', many=True, read_only=True)
 
     class Meta:
         model = Hospital
-        fields = [
-            'id', 'name', 'address', 'director', 'director_detail', 
-            'location', 'location_detail', 'departments', 'images_detail', 
-            'departments_detail', 'description', 'created_at', 'updated_at'
-        ]
+        # fields = [
+        #     'id', 'name', 'address', 'director', 'director_detail',
+        #     'location', 'location_detail', 'departments', 'images_detail', 
+        #     'departments_detail', 'description', 'created_at', 'updated_at'
+        # ]
+        fields = '__all__'
+    
 
-    def validate_director(self, user_obj):
-        if user_obj:
-            if user_obj.status in [0, 3]:
-                if user_obj.status != 3:
-                    user_obj.status = 3
-                    user_obj.save()
-                director_profile, created = Director.objects.get_or_create(user=user_obj)
-                return director_profile
-            raise serializers.ValidationError("Faqat foydalanuvchi Direktor qilib tayinlanishi mumkin.")
-        return user_obj
+    def create(self, validated_data):
+        director = validated_data.pop('director', None)
+        hospital = super().create(validated_data)
+        
+        if director:
+            # Directorni shifoxonaga tayinlash
+            hospital.director = director
+            hospital.save()
+            
+            # Director statusini yangilash
+            director.status = 3
+            director.save()
+        return hospital
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        if instance.director:
-            representation['director'] = instance.director.user.id
-        return representation
+    def update(self, instance, validated_data):
+        new_director = validated_data.pop('director', None)
+        old_director = instance.director
+
+        instance = super().update(instance, validated_data)
+
+        # Director o‘zgargan bo‘lsa
+        if new_director and new_director != old_director:
+            instance.director = new_director
+            instance.save()
+
+            # Yangi direktor statusini 3 qilamiz
+            new_director.status = 3
+            new_director.save()
+
+            # Eski direktor bo‘lsa, statusini 0 qilamiz
+            if old_director:
+                old_director.status = 0
+                old_director.save()
+        return instance

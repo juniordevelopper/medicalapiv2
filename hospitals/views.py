@@ -29,23 +29,14 @@ class HospitalViewSet(viewsets.ModelViewSet):
         return [IsAdminUser()]
 
     def perform_create(self, serializer):
-        # 1. Avval shifoxonani saqlaymiz
         hospital = serializer.save()
-
-        # 2. Request'dan kelgan barcha rasmlarni olamiz
         images = self.request.FILES.getlist('uploaded_images')
-
-        # 3. Har bir rasmni HospitalImage modeliga saqlaymiz
         for image in images:
             HospitalImage.objects.create(hospital=hospital, image=image)
 
-def perform_update(self, serializer):
-    hospital = serializer.save()
-    
-    # 1. Eski hamma rasmlarni bazadan o'chirib tashlaymiz
-    hospital.images.all().delete()
-    
-    # 2. Kelgan hamma rasmlarni (eski+yangi) yangidan saqlaymiz
-    images = self.request.FILES.getlist('uploaded_images')
-    for image in images:
-        HospitalImage.objects.create(hospital=hospital, image=image)
+    def perform_update(self, serializer):
+        hospital = serializer.save()
+        hospital.images.all().delete()
+        images = self.request.FILES.getlist('uploaded_images')
+        for image in images:
+            HospitalImage.objects.create(hospital=hospital, image=image)

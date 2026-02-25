@@ -1,6 +1,5 @@
 from django.db import models
 from locations.models import Location
-# accounts.models dan Director ni IMPORT QILMANG! 
 
 class Department(models.Model):
     name = models.CharField(max_length=255)
@@ -16,10 +15,10 @@ class Hospital(models.Model):
     address = models.TextField(blank=True, null=True)
     
     director = models.OneToOneField(
-        'accounts.Director', 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True, 
+        'accounts.CustomUser',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='managed_hospital'
     )
     

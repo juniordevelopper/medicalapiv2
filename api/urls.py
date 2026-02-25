@@ -4,21 +4,16 @@ from rest_framework.routers import DefaultRouter
 
 from locations.views import LocationViewSet
 from hospitals.views import HospitalViewSet, DepartmentViewSet
-from accounts.views import (
-    UserManagementViewSet,
-    PasswordRecoveryView, 
-    UsernameRecoveryView, 
-    PasswordResetConfirmView,
-    ResendVerificationView,
-    AllUserListView,
-    DirectorCandidateListView
-)
+from accounts.views import *
 
 router = DefaultRouter()
 router.register(r'locations', LocationViewSet, basename='locations')
 router.register(r'departments', DepartmentViewSet, basename='departments')
 router.register(r'hospitals', HospitalViewSet, basename='hospitals')
 router.register(r'users', UserManagementViewSet, basename='users-manage')
+router.register(r'director/doctors', DirectorDoctorViewSet, basename='director-doctor')
+router.register(r'director/queues', DirectorQueueViewSet, basename='director-queue')
+router.register(r'director/receptions', DirectorReceptionViewSet, basename='director-reception')
 
 urlpatterns = [
     # 1. Standart Auth (Login, Logout, User details)
@@ -39,5 +34,13 @@ urlpatterns = [
     path('', include(router.urls)),
 
     path('auth/all-users/', AllUserListView.as_view(), name='all_users_list'),
-    path('auth/director-candidates/', DirectorCandidateListView.as_view(), name='director-candidates'),
+    path('director-candidates/', DirectorCandidateListView.as_view(), name='director-candidates'),
+
+    path('dashboard/stats/', DashboardStatsAPIView.as_view()),
+
+    # YANGI PROFIL URL'LARI
+    path('profile/', MyProfileDetailView.as_view(), name='profile-detail'),
+    path('profile/update/', MyProfileUpdateView.as_view(), name='profile-update'),
+    path('profile/doctor/update/', MyDoctorProfileUpdateView.as_view(), name='doctor-profile-update'),
+    path('profile/reception/update/', MyReceptionProfileUpdateView.as_view(), name='reception-profile-update'),
 ]

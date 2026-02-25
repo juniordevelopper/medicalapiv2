@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Director, Doctor, Reception
+from .models import CustomUser, Doctor, Reception
 
 
 # ----------------------------
@@ -8,26 +8,17 @@ from .models import CustomUser, Director, Doctor, Reception
 # ----------------------------
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'username', 'status', 'is_active_account', 'is_blocked', 'is_deleted')
-    list_filter = ('status', 'is_active_account', 'is_blocked', 'is_deleted')
+    list_display = ('email', 'username', 'status', 'is_blocked', 'is_deleted')
+    list_filter = ('status', 'is_blocked', 'is_deleted')
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
         ('Personal info', {'fields': ('fullname', 'phone', 'profile', 'bio')}),
-        ('Permissions', {'fields': ('status', 'is_active_account', 'is_blocked', 'is_deleted', 'is_active', 'is_staff', 'is_superuser')}),
+        ('Permissions', {'fields': ('status', 'is_blocked', 'is_deleted', 'is_active', 'is_staff', 'is_superuser')}),
         ('Important dates', {'fields': ('last_login', 'date_joined', 'last_email_sent')}),
     )
     readonly_fields = ('last_login', 'date_joined')
     search_fields = ('email', 'username', 'fullname')
     ordering = ('email',)
-
-
-# ----------------------------
-# Director
-# ----------------------------
-@admin.register(Director)
-class DirectorAdmin(admin.ModelAdmin):
-    list_display = ('user', 'created_at')
-    search_fields = ('user__email', 'user__fullname')
 
 
 # ----------------------------

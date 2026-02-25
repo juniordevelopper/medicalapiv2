@@ -91,17 +91,25 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 SITE_ID = 1
 
 REST_FRAMEWORK = {
+    # Authentication sozlamalari
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication', 
+        'rest_framework.authentication.TokenAuthentication',
     ),
+    
+    # Permission sozlamalari
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny', 
     ),
+    
+    # Filter sozlamalari
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    
+    # Pagination sozlamalari (yangi qo'shilayotgan qism)
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 SIMPLE_JWT = {
@@ -140,14 +148,14 @@ CORS_ALLOWED_ORIGINS = [
 
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'my-app-auth',
-    'JWT_AUTH_REFRESH_COOKIE': 'my-refresh-token',
+    'JWT_AUTH_COOKIE': None,
+    'JWT_AUTH_REFRESH_COOKIE': None,
     'JWT_AUTH_HTTPONLY': False,
     'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserDetailSerializer',
     'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
 }
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = False
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",

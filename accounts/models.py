@@ -19,8 +19,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     fullname = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
-    
-    is_active_account = models.BooleanField(default=False)
+
     status = models.IntegerField(choices=USER_STATUS, default=0)
     is_deleted = models.BooleanField(default=False)
     is_blocked = models.BooleanField(default=False)
@@ -39,19 +38,28 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     @property
-    def is_patient(self): return self.status == 0
+    def is_patient(self): 
+        return self.status == 0
+        
     @property
-    def is_reception(self): return self.status == 1
+    def is_reception(self): 
+        return self.status == 1
+        
     @property
-    def is_doctor(self): return self.status == 2
+    def is_doctor(self): 
+        return self.status == 2
+        
     @property
-    def is_director(self): return self.status == 3
+    def is_director(self): 
+        return self.status == 3
+        
     @property
-    def is_admin_user(self): return self.status == 4
+    def is_admin_user(self): 
+        return self.status == 4
 
     @property
     def check_active(self):
-        return self.is_active_account and not self.is_deleted
+        return self.is_deleted
 
     @property
     def check_blocked(self):
@@ -59,22 +67,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.email} ({self.get_status_display()})"
-
-
-# ----------------------------
-# Director
-# ----------------------------
-class Director(models.Model):
-    user = models.OneToOneField(
-        CustomUser, 
-        on_delete=models.CASCADE, 
-        related_name='director_profile'
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Director: {self.user.fullname or self.user.email}"
 
 
 # ----------------------------
